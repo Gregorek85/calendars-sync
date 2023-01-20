@@ -100,17 +100,7 @@ class Google:
         elapsed_time = time.time() - start_time
         print(f"Deleted {len(gcal_events)} events from Google in {elapsed_time} secs.")
 
-    def add_google_events(self, events):
-        # add all events to google calendar
-        start_time = time.time()
-
-        for event in events:
-            e = self.build_gcal_event(event)
-            result = self.g_events_service.insert(
-                calendarId=google_calendar_id, body=e
-            ).execute()
-            assert isinstance(result, dict)
-            time.sleep(0.1)
-
-        elapsed_time = time.time() - start_time
-        print(f"Added {len(events)} events to Google in {elapsed_time} secs.")
+    def addEvent(self, event):
+        self.g_events_service.insert(
+            calendarId=google_calendar_id, body=self.build_gcal_event(event)
+        ).execute()
