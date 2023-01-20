@@ -38,12 +38,17 @@ class Google:
         print("Authenticated Google.")
 
     def build_gcal_event(self, event):
+        # get number of attendees:
+        no = 0
+        for at in event.attendees:
+            no += 1
+        if " ".join(str(event.organizer).split(" ", 2)[:2]) == MS_calendar_name:
+            no += 1
         # construct a google calendar event from an outlook event
-
         e = {
             "summary": clean_subject(event.subject),
             "location": event.location["displayName"],
-            "description": clean_body(event.body),
+            "description": f"Wydarzenie z pracy R, liczba uczestników: {no}",
         }
 
         if event.is_all_day:
@@ -101,6 +106,6 @@ class Google:
         print(f"Deleted {len(gcal_events)} events from Google in {elapsed_time} secs.")
 
     def addEvent(self, event):
-        self.g_events_service.insert(
+        return self.g_events_service.insert(
             calendarId=google_calendar_id, body=self.build_gcal_event(event)
         ).execute()

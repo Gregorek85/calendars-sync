@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 
+
 def clean_subject(subject):
     # remove prefix clutter from an outlook event subject
     remove = [
@@ -13,8 +14,5 @@ def clean_subject(subject):
     return subject
 
 
-def clean_body(body):
-    # TODO
-    # strip out html and excess line returns from outlook event body
-    text = BeautifulSoup(body, "html.parser").get_text()
-    return text.replace("\n", " ").replace("\r", "\n")
+def clean_body(no):
+    return f"Wydarzenie z pracy Radka, liczba uczestników: {no}"

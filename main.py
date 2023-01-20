@@ -18,13 +18,16 @@ if __name__ == "__main__":
     # check if all the current event ids/timestamps match the previous run
     # only update google calendar if they don't all match (means there are changes)
     start_time = time.time()
+    added = 0
     for event in outlook_events:
-        result = google.addEvent(event)
-        assert isinstance(result, dict)
-        time.sleep(0.1)
+        if not "Hiszp" in event.subject[:5] and not "Canceled" in event.subject[:8]:
+            result = google.addEvent(event)
+            assert isinstance(result, dict)
+            time.sleep(0.1)
+            added += 1
 
     elapsed_time = time.time() - start_time
-    print(f"Added {len(outlook_events)} events to Google in {elapsed_time} secs.")
+    print(f"Added {added} events to Google in {elapsed_time} secs.")
 
     # all done
     elapsed_time = time.time() - start_time
