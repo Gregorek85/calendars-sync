@@ -72,9 +72,7 @@ class Google:
         e.update(start_end)
         return e
 
-    def delete_google_events(self):
-        # delete all events from google calendar
-        start_time = time.time()
+    def getGoogleCalendarEvents(self, google_calendar_id):
         gcid = google_calendar_id
         mr = 2500
         # retrieve a list of all events
@@ -91,8 +89,15 @@ class Google:
             ).execute()
             gcal_events.extend(result.get("items", []))
             i += 1
-        print(f"Retrieved {len(gcal_events)} events across {i} pages from Google.")
+        print(
+            f"Retrieved {len(gcal_events)} events across {i} pages from Google Calendar (id={gcid})."
+        )
+        return gcal_events
 
+    def delete_google_events(self):
+        # delete all events from google calendar
+        start_time = time.time()
+        gcal_events = self.getGoogleCalendarEvents(google_calendar_id)
         # delete each event retrieved
         for gcal_event in gcal_events:
             request = self.g_events_service.delete(
