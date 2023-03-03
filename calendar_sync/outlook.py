@@ -34,6 +34,45 @@ class MS365:
         else:
             self.cal = self.account.schedule().get_default_calendar()
 
+    def delete_private_events(self):
+        calendar = self.cal
+        query = calendar.new_query("subject").contains("Private Event")
+        events = list(
+            self.cal.get_events(query=query, limit=None, include_recurring=False)
+        )
+        for event in events:
+            print(event.start, event.end, event.subject)
+            event.delete()
+
+    def createEvent(self, name, body, start, duration=False):
+        calendar = self.cal
+        new_event = calendar.new_event()  # creates a new unsaved event
+        new_event.subject = name
+        new_event.body = body
+        # naive datetimes will automatically be converted to timezone aware datetime
+        #  objects using the local timezone detected or the protocol provided timezone
+        new_event.start = start
+        if duration:
+            new_event.end = start + dt.timedelta(minutes=duration)
+        # Check if such event exists:
+        query = (
+            self.cal.new_query("start")
+            .greater_equal(start)
+            .chain("and")
+            .on_attribute("end")
+            .less_equal(new_event.end)
+        )
+        events = list(
+            self.cal.get_events(query=query, limit=None, include_recurring=True)
+        )
+        for event in events:
+            if event.subject == name:
+                print("Such event exists")
+                return False
+        # new_event.location = "This is a Virtual Classroom in Microsoft Teams"
+        # new_event.remind_before_minutes = 45
+        new_event.save()
+
     def get_outlook_events(self):
         # get all events from an outlook calendar
         start_time = time.time()

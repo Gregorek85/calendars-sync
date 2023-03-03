@@ -6,7 +6,6 @@ from .helpers import clean_subject
 import datetime as dt
 
 from .config import *
-from googleapiclient.errors import HttpError
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -74,49 +73,7 @@ class Google:
 
         e.update(start_end)
         return e
-
-    def update_family_events(self):
-        events = self.get_family_events()
-        for event in events:
-            event_id = event["id"]
-            start = event.get("start", {})
-            end = event.get("end", {})
-            # Check if the event is not an all-day event
-            if "dateTime" in start and "dateTime" in end:
-                attendee = {"email": MS_calendar_email}
-                try:
-                    freshly_removed = False
-                    attendees = event.get("attendees", [])
-                    for att in attendees:
-                        if (
-                            att["email"] == MS_calendar_email
-                            and att["responseStatus"] == "needsAction"
-                        ):
-                            attendees.remove(att)
-                            event["attendees"] = attendees
-                            event = self.g_events_service.update(
-                                calendarId=family_google_calendar_id,
-                                eventId=event_id,
-                                body=event,
-                            ).execute()
-                            print(
-                                f"Attendee {MS_calendar_email} removed from event {event_id}."
-                            )
-                            freshly_removed = True
-                    if not freshly_removed:
-                        event["attendees"] = event.get("attendees", []) + [attendee]
-                        updated_event = self.g_events_service.update(
-                            calendarId=family_google_calendar_id,
-                            eventId=event_id,
-                            body=event,
-                            sendUpdates="all",
-                        ).execute()
-                        print(
-                            f"Event {event_id} updated with attendee: {attendee['email']}"
-                        )
-                except HttpError as error:
-                    print(f"Error updating event {event_id}: {error}")
-
+        
     def get_family_events(self):
         now = dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc).isoformat()
         return self.getGoogleCalendarEvents(family_google_calendar_id, timeMin=now)
