@@ -10,6 +10,8 @@ if __name__ == "__main__":
     # authenticate outlook and google credentials
     ms365 = MS365()
     google = Google()
+    family_events = google.update_family_events()
+    exit()
     # delete all existing google events then add all outlook events
     google.delete_google_events()
     # exit()
@@ -28,7 +30,8 @@ if __name__ == "__main__":
 
     elapsed_time = time.time() - start_time
     print(f"Added {added} events to Google in {elapsed_time} secs.")
-
+    # now update events from Google family calendar to make sure they include my company address:
+    family_events = google.update_family_events()
     # all done
     elapsed_time = time.time() - start_time
     print(f"Finished in {elapsed_time} secs.\n")
