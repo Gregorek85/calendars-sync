@@ -1,8 +1,9 @@
 from O365 import Account, FileSystemTokenBackend
 import datetime as dt
 import time
-
+from tqdm import tqdm
 from .config import *
+from requests.exceptions import HTTPError
 
 
 class MS365:
@@ -40,8 +41,8 @@ class MS365:
         events = list(
             self.cal.get_events(query=query, limit=None, include_recurring=False)
         )
-        for event in events:
-            print(event.start, event.end, event.subject)
+        for event in tqdm(events):
+            # print(event.start, event.end, event.subject)
             event.delete()
 
     def createEvent(self, name, body, start, duration=False):
@@ -67,10 +68,18 @@ class MS365:
         )
         for event in events:
             if event.subject == name:
-                print("Such event exists")
+                # print("Such event exists")
                 return False
         # new_event.location = "This is a Virtual Classroom in Microsoft Teams"
         # new_event.remind_before_minutes = 45
+        n = 0
+        while n < 3:
+            try:
+                new_event.save()
+                return True
+            except HTTPError:
+                time.sleep(10)
+                n -= 1
         new_event.save()
 
     def get_outlook_events(self):
@@ -89,5 +98,5 @@ class MS365:
         events = list(events)
 
         elapsed_time = time.time() - start_time
-        print(f"Retrieved {len(events)} events from Outlook in {elapsed_time} secs.")
+        # print(f"Retrieved {len(events)} events from Outlook in {elapsed_time} secs.")
         return events

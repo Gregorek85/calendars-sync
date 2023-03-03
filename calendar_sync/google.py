@@ -73,7 +73,7 @@ class Google:
 
         e.update(start_end)
         return e
-        
+
     def get_family_events(self):
         now = dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc).isoformat()
         return self.getGoogleCalendarEvents(family_google_calendar_id, timeMin=now)
@@ -97,9 +97,9 @@ class Google:
             ).execute()
             gcal_events.extend(result.get("items", []))
             i += 1
-        print(
-            f"Retrieved {len(gcal_events)} events across {i} pages from Google Calendar (id={gcid})."
-        )
+        # print(
+        #     f"Retrieved {len(gcal_events)} events across {i} pages from Google Calendar (id={gcid})."
+        # )
         return gcal_events
 
     def delete_google_events(self):
