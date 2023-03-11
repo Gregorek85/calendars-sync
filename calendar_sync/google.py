@@ -6,9 +6,9 @@ from .helpers import clean_subject
 import datetime as dt
 
 from .config import *
-from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.exceptions import RefreshError
 
 
 class Google:
@@ -25,8 +25,12 @@ class Google:
 
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
+                request = Request()
+                try:
+                    creds.refresh(request)
+                except RefreshError:
+                    pass
+            if not creds.valid:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "calendar_sync/credentials/client_secret.json", SCOPES
                 )
