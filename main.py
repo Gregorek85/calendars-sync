@@ -2,11 +2,13 @@ import datetime as dt
 import time
 from calendar_sync.google import Google
 from calendar_sync.outlook import MS365
-from googleapiclient.errors import HttpError
 from dateutil import parser
 from tqdm import tqdm
+from HealthCheck_Pinger import pingDecor
 
-if __name__ == "__main__":
+
+@pingDecor("dc45150a-31e3-4786-9643-cc4aebb262f6")
+def main():
     start_time = time.time()
     current_time = "{:%Y-%m-%d %H:%M:%S}".format(dt.datetime.now())
     print(f"Started at {current_time}.")
@@ -52,3 +54,7 @@ if __name__ == "__main__":
     # all done
     elapsed_time = time.time() - start_time
     print(f"Finished in {elapsed_time} secs.\n")
+
+
+if __name__ == "__main__":
+    main()

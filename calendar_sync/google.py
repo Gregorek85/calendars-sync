@@ -34,7 +34,7 @@ class Google:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "calendar_sync/credentials/client_secret.json", SCOPES
                 )
-                creds = flow.run_local_server()
+                creds = flow.run_console()
 
             with open(pp, "wb") as token:
                 pickle.dump(creds, token)
