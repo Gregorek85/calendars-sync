@@ -21,7 +21,7 @@ class MS365:
             tenant_id=MS_tenant_id or None,
         )
         if not self.account.is_authenticated:
-            # not authenticated, throw error
+            # not authenticated
             self.account.authenticate(scopes=scopes)
         print("Authenticated Microsoft")
         self.get_calendar()
