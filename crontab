@@ -1,4 +1,4 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-0 9,16,22 * * * python /app/main.py >> /var/log/cron.log 2>&1
+15 9,16,22 * * * python /app/main.py >> /var/log/cron.log 2>&1
