@@ -34,7 +34,7 @@ COPY . /app
 
 # Convert line endings from CRLF to LF
 RUN sed -i 's/\r$//' /app/calendar_sync/credentials/outlook_token.txt
-
+RUN sed -i 's/\r$//' /app/calendar_sync/credentials/google_token.json
 # Give execution rights on the entrypoint.sh script
 RUN chmod +x /app/entrypoint.sh
 

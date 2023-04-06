@@ -1,10 +1,10 @@
 from google.auth.transport.requests import Request
 import os
-import pickle
+import json
 import time
 from .helpers import clean_subject
 import datetime as dt
-
+from google.oauth2 import credentials as google_credentials
 from .config import *
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -13,32 +13,36 @@ from google.auth.exceptions import RefreshError
 
 class Google:
     def __init__(self):
-        # If modifying these scopes, delete the file token.pickle.
+        # If modifying these scopes, delete the file token.json.
         SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
         # authenticate google api credentials
         creds = None
-        pp = "calendar_sync/credentials/google_token.pickle"
+        pp = "calendar_sync/credentials/google_token.json"
+        print("hello")
         if os.path.exists(pp):
-            with open(pp, "rb") as token:
-                creds = pickle.load(token)
-
+            with open(pp, "r") as token:
+                creds = google_credentials.Credentials.from_authorized_user_info(
+                    json.load(token)
+                )
+        print("hello")
         if not creds or not creds.valid:
+            print("hello")
             if creds and creds.expired and creds.refresh_token:
                 request = Request()
                 try:
                     creds.refresh(request)
                 except RefreshError:
                     pass
-            if not creds.valid:
+            else:
+                print("elo")
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "calendar_sync/credentials/client_secret.json", SCOPES
                 )
                 creds = flow.run_local_server()
 
-            with open(pp, "wb") as token:
-                pickle.dump(creds, token)
-
+            with open(pp, "w") as token:
+                json.dump(json.loads(creds.to_json()), token)
         self.service = build("calendar", "v3", credentials=creds)
         self.g_events_service = self.service.events()
         print("Authenticated Google.")
