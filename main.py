@@ -15,8 +15,9 @@ def main():
     # authenticate outlook and google credentials
     ms365 = MS365()
     google = Google()
-    print("Deleting Private Events..")
+    print("Deleting Private Events from Microsoft")
     ms365.delete_private_events()
+    print("Get google events")
     events = google.get_family_events()
     print("Looping through family events")
     for google_event in tqdm(events):

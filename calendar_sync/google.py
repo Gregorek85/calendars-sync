@@ -4,43 +4,41 @@ import json
 import time
 from .helpers import clean_subject
 import datetime as dt
-from google.oauth2 import credentials as google_credentials
+from google.oauth2.credentials import Credentials
 from .config import *
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.exceptions import RefreshError
+import traceback
 
 
 class Google:
     def __init__(self):
         # If modifying these scopes, delete the file token.json.
         SCOPES = ["https://www.googleapis.com/auth/calendar"]
-
         # authenticate google api credentials
         creds = None
         pp = "calendar_sync/credentials/google_token.json"
-        print("hello")
         if os.path.exists(pp):
-            with open(pp, "r") as token:
-                creds = google_credentials.Credentials.from_authorized_user_info(
-                    json.load(token)
-                )
-        print("hello")
+            creds = Credentials.from_authorized_user_file(pp, SCOPES)
         if not creds or not creds.valid:
-            print("hello")
             if creds and creds.expired and creds.refresh_token:
-                request = Request()
                 try:
+                    request = Request()
                     creds.refresh(request)
                 except RefreshError:
-                    pass
+                    traceback.print_exc()
+                    print("error refreshing credentials")
+                    os.sys.exit(1)
+                except:
+                    print("Other error occurred")
+                    traceback.print_exc()
+                    os.sys.exit(1)
             else:
-                print("elo")
                 flow = InstalledAppFlow.from_client_secrets_file(
                     "calendar_sync/credentials/client_secret.json", SCOPES
                 )
                 creds = flow.run_local_server()
-
             with open(pp, "w") as token:
                 json.dump(json.loads(creds.to_json()), token)
         self.service = build("calendar", "v3", credentials=creds)
