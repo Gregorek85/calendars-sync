@@ -81,8 +81,14 @@ class Google:
         return e
 
     def get_family_events(self):
-        now = dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc).isoformat()
-        return self.getGoogleCalendarEvents(family_google_calendar_id, timeMin=now)
+        # Using now did not work because of recurrent events
+        # now = dt.datetime.utcnow().replace(tzinfo=dt.timezone.utc).isoformat()
+        start_date = dt.datetime(
+            2023, 4, 1, 8, 0, 0, 0, tzinfo=dt.timezone.utc
+        ).isoformat()
+        return self.getGoogleCalendarEvents(
+            family_google_calendar_id, timeMin=start_date
+        )
 
     def getGoogleCalendarEvents(self, google_calendar_id, timeMin=None):
         gcid = google_calendar_id
